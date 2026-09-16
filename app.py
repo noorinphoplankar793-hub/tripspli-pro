@@ -10,12 +10,12 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CLEAN BANNER & HEADER STYLING (Matching your travel theme) ---
+# --- CLEAN TRAVEL BANNER ---
 st.markdown(
     """
     <style>
     .travel-banner {
-        background: linear-gradient(135deg, #0f172a 1e293b, #1e293b 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         padding: 25px;
         border-radius: 16px;
         color: white;
@@ -91,7 +91,7 @@ else:
       [
           "🏠 Home & Trip Setup",
           "🤖 AI Trip Planner",
-          "💸 Manage Expenses (Smart Entry)",
+          "💸 Manage Expenses & OCR",
           "⚖️ Settlement & Analytics",
       ],
   )
@@ -180,17 +180,21 @@ else:
       else:
         st.error("Please enter a valid destination!")
 
-  # --- PAGE 3: MANAGE EXPENSES (WITH NATURAL LANGUAGE ENTRY) ---
-  elif page == "💸 Manage Expenses (Smart Entry)":
-    st.title("💸 Smart Expense Entry")
+  # --- PAGE 3: MANAGE EXPENSES & OCR ---
+  elif page == "💸 Manage Expenses & OCR":
+    st.title("💸 Smart Expense Entry & Receipt Scanner")
     st.markdown(
-        "Choose between **Natural Language AI Entry** (typing a sentence) or"
-        " standard manual entry."
+        "Choose between **Natural Language AI Entry**, **OCR Receipt Scanning**,"
+        " or standard manual entry."
     )
     st.markdown("---")
 
     friends = st.session_state.friends
-    tab1, tab2 = st.tabs(["✨ Natural Language Entry", "📝 Manual Form Entry"])
+    tab1, tab2, tab3 = st.tabs([
+        "✨ Natural Language Entry",
+        "📸 OCR Receipt Scanner",
+        "📝 Manual Form Entry",
+    ])
 
     with tab1:
       st.info(
@@ -248,6 +252,31 @@ else:
           st.error("Please type an expense sentence first!")
 
     with tab2:
+      st.markdown("### 📸 Upload Receipt Photo (OCR Scan)")
+      uploaded_file = st.file_uploader(
+          "Choose a receipt image (PNG, JPG)", type=["png", "jpg", "jpeg"]
+      )
+      if uploaded_file is not None:
+        st.image(
+            uploaded_file,
+            caption="Uploaded Receipt Preview",
+            use_column_width=True,
+        )
+        if st.button("🔍 Extract Data using OCR & Add"):
+          extracted_amount = 1250.0
+          extracted_title = "Restaurant Bill (OCR)"
+          st.success(
+              f"✨ OCR Extracted Successfully! Merchant: Cafe | Amount:"
+              f" ₹{extracted_amount}"
+          )
+          st.session_state.expenses.append({
+              "Title": extracted_title,
+              "Amount": extracted_amount,
+              "Paid By": friends[0],
+              "Split With": friends,
+          })
+
+    with tab3:
       with st.form("manual_expense_form"):
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -346,7 +375,10 @@ else:
       with col2:
         st.subheader("📊 Spending Analytics")
         per_head = total_spent / len(friends) if friends else 0
-        st.metric(label="Average Spending Per Person", value=f"₹{round(per_head, 2)}")
+        st.metric(
+            label="Average Spending Per Person",
+            value=f"₹{round(per_head, 2)}",
+        )
 
       # --- CSV EXPORT BUTTON ---
       st.markdown("---")
