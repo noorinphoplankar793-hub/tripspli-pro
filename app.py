@@ -10,13 +10,13 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CLEAN TRAVEL BANNER ---
+# --- CLEAN GLOBAL HEADER BANNER ---
 st.markdown(
     """
     <style>
-    .travel-banner {
+    .global-banner {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 25px;
+        padding: 20px;
         border-radius: 16px;
         color: white;
         text-align: center;
@@ -24,21 +24,21 @@ st.markdown(
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
-    .travel-banner h2 {
+    .global-banner h2 {
         color: #38bdf8;
         margin-bottom: 5px;
         font-weight: 700;
         letter-spacing: 1px;
     }
-    .travel-banner p {
+    .global-banner p {
         color: #94a3b8;
-        font-size: 1rem;
+        font-size: 0.95rem;
         margin: 0;
     }
     </style>
-    <div class="travel-banner">
-        <h2>✈️ TRIPSPLIT AI — THE WORLD IS WAITING</h2>
-        <p>Explore Destinations, Plan Itineraries & Split Expenses Seamlessly</p>
+    <div class="global-banner">
+        <h2>✈️ TRIPSPLIT AI — EXPLORE DREAMS. DISCOVER THE WORLD.</h2>
+        <p>Smart Travel Planner, Receipt OCR & Expense Splitting Suite</p>
     </div>
 """,
     unsafe_allow_html=True,
@@ -103,6 +103,65 @@ else:
 
   # --- PAGE 1: HOME & TRIP SETUP ---
   if page == "🏠 Home & Trip Setup":
+    # --- EXACT "TRIPPYPEDIA" STYLE HERO BANNER WITH SEARCH & TAGS ---
+    st.markdown(
+        """
+        <style>
+        .tripypedia-hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 35px 20px;
+            border-radius: 24px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+        }
+        .tripypedia-logo {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #38bdf8;
+            letter-spacing: 1.5px;
+            margin-bottom: 5px;
+        }
+        .tripypedia-tagline {
+            font-size: 1.15rem;
+            color: #cbd5e1;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
+        .search-pill-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .search-pill {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            font-weight: 500;
+        }
+        </style>
+        <div class="tripypedia-hero">
+            <div class="tripypedia-logo">TripSplit AI</div>
+            <div class="tripypedia-tagline">Explore Dreams. Discover the World.</div>
+            <div class="search-pill-container">
+                <div class="search-pill">🌴 Tropical Paradies</div>
+                <div class="search-pill">🏔️ Adventure & Nature</div>
+                <div class="search-pill">❄️ Winter & Snow</div>
+                <div class="search-pill">🏛️ Cultural Escapes</div>
+                <div class="search-pill">🦁 Safari & Wildlife</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     st.title("🌍 Trip Setup & Overview")
     st.markdown(
         "Set up your trip details, members, and total budget to begin smart"
