@@ -1,4 +1,17 @@
-# --- CREATIVE TRAVEL HERO BANNER (CSS + HTML) ---
+# 1. PEHLE IMPORTS AAYENGE
+import re
+import numpy as np
+import pandas as pd
+import streamlit as st
+
+# 2. PHIR PAGE CONFIG
+st.set_page_config(
+    page_title="TripSplit AI - Next-Gen Expense & Itinerary",
+    page_icon="✈️",
+    layout="wide",
+)
+
+# 3. PHIR TERA HERO BANNER AUR CSS
 st.markdown(
     """
     <style>
@@ -54,6 +67,11 @@ st.markdown(
             <div class="feature-badge">📊 Live Budget Tracking</div>
         </div>
     </div>
-""",
+    """,
     unsafe_allow_html=True,
 )
+
+# 4. ISKE BAAD TERA SESSION STATE AUR BAAKI KA CODE HOGA...
+if "logged_in" not in st.session_state:
+  st.session_state.logged_in = False
+# ... (baaki ka code waise hi rehne de)
