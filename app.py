@@ -3,11 +3,36 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-# Page Configuration
+# Page Configuration (Wide layout supports auto-responsiveness)
 st.set_page_config(
     page_title="TripSplit AI - Pro Expense Manager",
     page_icon="✈️",
     layout="wide",
+)
+
+# --- CUSTOM CSS FOR RESPONSIVE DESIGN (MOBILE & LAPTOP OPTIMIZED) ---
+st.markdown(
+    """
+    <style>
+    /* Global responsiveness for text and containers */
+    @media (max-width: 768px) {
+        .stButton button {
+            width: 100% !important;
+        }
+        h1 {
+            font-size: 1.8rem !important;
+        }
+        h3 {
+            font-size: 1.3rem !important;
+        }
+    }
+    /* Clean card padding and metrics */
+    [data-testid="stMetricValue"] {
+        font-size: 1.5rem !important;
+    }
+    </style>
+""",
+    unsafe_allow_html=True,
 )
 
 # --- SESSION STATE INITIALIZATION ---
@@ -105,7 +130,7 @@ else:
           f" Currency {st.session_state.base_currency}"
       )
 
-  # --- PAGE 2: AI ITINERARY PLANNER (WITH INTERESTS) ---
+  # --- PAGE 2: AI ITINERARY PLANNER ---
   elif page == "🤖 AI Itinerary Planner":
     st.title("🤖 AI Itinerary Recommendation Engine")
     st.markdown(
@@ -257,7 +282,6 @@ else:
             use_column_width=True,
         )
         if st.button("🔍 Extract Data using OCR & Add"):
-          # Simulated OCR Extraction result
           extracted_amount = 1250.0
           extracted_title = "Restaurant Bill (OCR)"
           st.success(
