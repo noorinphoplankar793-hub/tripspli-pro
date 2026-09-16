@@ -63,6 +63,8 @@ if "friends" not in st.session_state:
   st.session_state.friends = ["Rahul", "Priya", "Amit", "Neha"]
 if "trip_budget" not in st.session_state:
   st.session_state.trip_budget = 15000.0
+if "search_destination" not in st.session_state:
+  st.session_state.search_destination = "Goa, India"
 
 # --- STABLE LOGIN SCREEN ---
 if not st.session_state.logged_in:
@@ -112,16 +114,16 @@ else:
 
   # --- PAGE 1: HOME & TRIP SETUP ---
   if page == "🏠 Home & Trip Setup":
-    # --- STUNNING HIGH-END TRAVEL HERO BANNER (With Background Image & Glassmorphism) ---
+    # --- STUNNING HIGH-END TRAVEL HERO BANNER (With Background Image & Working Search Input) ---
     st.markdown(
         """
         <style>
         .tripypedia-hero-bg {
-            background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+            background: linear-gradient(rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.88)), 
                         url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80');
             background-size: cover;
             background-position: center;
-            padding: 50px 20px;
+            padding: 40px 20px 30px 20px;
             border-radius: 24px;
             color: white;
             text-align: center;
@@ -130,71 +132,79 @@ else:
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
         .tripypedia-logo {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 800;
             background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: 1.5px;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
         .tripypedia-tagline {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #e2e8f0;
             font-weight: 400;
             font-style: italic;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        .fake-search-box {
-            background: rgba(255, 255, 255, 0.95);
-            max-width: 600px;
-            margin: 0 auto 20px auto;
-            padding: 12px 20px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-            color: #64748b;
-            font-weight: 500;
-            font-size: 1rem;
         }
         .search-pill-container {
             display: flex;
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
+            margin-top: 15px;
         }
         .search-pill {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 6px 16px;
+            padding: 5px 14px;
             border-radius: 30px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #ffffff;
             font-weight: 500;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         </style>
         <div class="tripypedia-hero-bg">
             <div class="tripypedia-logo">TripSplit AI</div>
             <div class="tripypedia-tagline">Explore Dreams. Discover the World.</div>
-            <div class="fake-search-box">
-                <span>🔍 &nbsp; Where to next? (Goa, Paris, Bali...)</span>
-            </div>
-            <div class="search-pill-container">
-                <div class="search-pill">🌴 Tropical Paradises</div>
-                <div class="search-pill">🏔️ Adventure & Nature</div>
-                <div class="search-pill">❄️ Winter & Snow</div>
-                <div class="search-pill">🏛️ Cultural Escapes</div>
-                <div class="search-pill">🦁 Safari & Wildlife</div>
-            </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
+    # --- FULLY WORKING INTERACTIVE SEARCH BAR ---
+    col_s1, col_s2, col_s3 = st.columns([1, 3, 1])
+    with col_s2:
+      st.markdown(
+          "<h4 style='text-align: center; margin-bottom: 5px;'>🔍 Where to"
+          " next?</h4>",
+          unsafe_allow_html=True,
+      )
+      user_search = st.text_input(
+          "Search destination",
+          value=st.session_state.search_destination,
+          placeholder="Type any city or country (e.g., Paris, Bali)",
+          label_visibility="collapsed",
+      )
+      if user_search:
+        st.session_state.search_destination = user_search
+
+      st.markdown(
+          """
+            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; margin-bottom: 20px;">
+                <span class="search-pill">🌴 Tropical Paradises</span>
+                <span class="search-pill">🏔️ Adventure & Nature</span>
+                <span class="search-pill">❄️ Winter & Snow</span>
+                <span class="search-pill">🏛️ Cultural Escapes</span>
+                <span class="search-pill">🦁 Safari & Wildlife</span>
+            </div>
+            """,
+          unsafe_allow_html=True,
+      )
+
+    st.markdown("---")
     st.title("🌍 Trip Setup & Overview")
     st.markdown(
         "Set up your trip details, members, and total budget to begin smart"
@@ -204,8 +214,13 @@ else:
 
     col1, col2 = st.columns(2)
     with col1:
-      trip_name = st.text_input("Trip Name", "Goa Adventure 2026")
-      destination = st.text_input("Destination", "Goa, India")
+      trip_name = st.text_input(
+          "Trip Name",
+          f"{st.session_state.search_destination.split(',')[0]} Adventure 2026",
+      )
+      destination = st.text_input(
+          "Destination", st.session_state.search_destination
+      )
       st.session_state.trip_budget = st.number_input(
           "💰 Total Trip Budget (₹)",
           min_value=1000.0,
@@ -224,8 +239,8 @@ else:
 
     if friends:
       st.success(
-          f"✨ Trip '{trip_name}' configured with a budget of"
-          f" ₹{st.session_state.trip_budget} for: {', '.join(friends)}"
+          f"✨ Trip '{trip_name}' configured for **{destination}** with a budget"
+          f" of ₹{st.session_state.trip_budget} for: {', '.join(friends)}"
       )
 
   # --- PAGE 2: AI TRIP PLANNER ---
@@ -238,7 +253,10 @@ else:
 
     col1, col2 = st.columns(2)
     with col1:
-      ai_destination = st.text_input("🌍 Enter Destination", "Goa")
+      ai_destination = st.text_input(
+          "🌍 Enter Destination",
+          st.session_state.search_destination.split(",")[0],
+      )
     with col2:
       trip_days = st.number_input(
           "📅 Number of Days", min_value=1, max_value=15, value=3
