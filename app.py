@@ -10,34 +10,42 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- CLEAN GLOBAL HEADER BANNER ---
+# --- GLOBAL STYLING & BACKGROUND OVERRIDE ---
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Outfit', sans-serif;
+    }
+
+    /* Global Dark Banner Styling */
     .global-banner {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 20px;
-        border-radius: 16px;
+        padding: 15px 25px;
+        border-radius: 12px;
         color: white;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .global-banner h2 {
         color: #38bdf8;
-        margin-bottom: 5px;
+        margin-bottom: 2px;
         font-weight: 700;
+        font-size: 1.3rem;
         letter-spacing: 1px;
     }
     .global-banner p {
         color: #94a3b8;
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         margin: 0;
     }
     </style>
     <div class="global-banner">
-        <h2>✈️ TRIPSPLIT AI — EXPLORE DREAMS. DISCOVER THE WORLD.</h2>
+        <h2>✈️ TRIPSPLIT AI — PRO TRAVEL SUITE</h2>
         <p>Smart Travel Planner, Receipt OCR & Expense Splitting Suite</p>
     </div>
 """,
@@ -59,7 +67,8 @@ if "trip_budget" not in st.session_state:
 # --- STABLE LOGIN SCREEN ---
 if not st.session_state.logged_in:
   st.markdown(
-      "<h1 style='text-align: center;'>🔐 Member Login</h1>",
+      "<h1 style='text-align: center; margin-top: 40px;'>🔐 Member"
+      " Login</h1>",
       unsafe_allow_html=True,
   )
   st.markdown(
@@ -103,55 +112,79 @@ else:
 
   # --- PAGE 1: HOME & TRIP SETUP ---
   if page == "🏠 Home & Trip Setup":
-    # --- EXACT "TRIPPYPEDIA" STYLE HERO BANNER WITH SEARCH & TAGS ---
+    # --- STUNNING HIGH-END TRAVEL HERO BANNER (With Background Image & Glassmorphism) ---
     st.markdown(
         """
         <style>
-        .tripypedia-hero {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            padding: 35px 20px;
+        .tripypedia-hero-bg {
+            background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+                        url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 50px 20px;
             border-radius: 24px;
             color: white;
             text-align: center;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-            border: 1px solid rgba(56, 189, 248, 0.25);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
         .tripypedia-logo {
-            font-size: 2.8rem;
+            font-size: 3rem;
             font-weight: 800;
-            color: #38bdf8;
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             letter-spacing: 1.5px;
             margin-bottom: 5px;
         }
         .tripypedia-tagline {
-            font-size: 1.15rem;
-            color: #cbd5e1;
+            font-size: 1.2rem;
+            color: #e2e8f0;
+            font-weight: 400;
             font-style: italic;
             margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .fake-search-box {
+            background: rgba(255, 255, 255, 0.95);
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            color: #64748b;
+            font-weight: 500;
+            font-size: 1rem;
         }
         .search-pill-container {
             display: flex;
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
-            margin-top: 20px;
         }
         .search-pill {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 16px;
             border-radius: 30px;
             font-size: 0.85rem;
-            color: #e2e8f0;
+            color: #ffffff;
             font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
         </style>
-        <div class="tripypedia-hero">
+        <div class="tripypedia-hero-bg">
             <div class="tripypedia-logo">TripSplit AI</div>
             <div class="tripypedia-tagline">Explore Dreams. Discover the World.</div>
+            <div class="fake-search-box">
+                <span>🔍 &nbsp; Where to next? (Goa, Paris, Bali...)</span>
+            </div>
             <div class="search-pill-container">
-                <div class="search-pill">🌴 Tropical Paradies</div>
+                <div class="search-pill">🌴 Tropical Paradises</div>
                 <div class="search-pill">🏔️ Adventure & Nature</div>
                 <div class="search-pill">❄️ Winter & Snow</div>
                 <div class="search-pill">🏛️ Cultural Escapes</div>
