@@ -10,16 +10,20 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- SESSION STATE FOR LOGIN ---
+# --- SESSION STATE INITIALIZATION ---
 if "logged_in" not in st.session_state:
   st.session_state.logged_in = False
 if "username" not in st.session_state:
   st.session_state.username = ""
+if "expenses" not in st.session_state:
+  st.session_state.expenses = []
+if "friends" not in st.session_state:
+  st.session_state.friends = ["Rahul", "Priya", "Amit", "Neha"]
 
-# --- LOGIN SCREEN ---
+# --- STABLE LOGIN SCREEN (No complex columns blocking clicks) ---
 if not st.session_state.logged_in:
   st.markdown(
-      "<h1 style='text-align: center;'>✈️ Welcome to TripSplit AI</h1>",
+      "<h1 style='text-align: center;'>✈️ TripSplit AI</h1>",
       unsafe_allow_html=True,
   )
   st.markdown(
@@ -27,18 +31,19 @@ if not st.session_state.logged_in:
       " Itinerary Partner</h4>",
       unsafe_allow_html=True,
   )
+  st.markdown("---")
 
-  col1, col2, col3 = st.columns([1, 2, 1])
-  with col2:
-    st.markdown("### 🔐 Get Started")
-    name_input = st.text_input("Enter your name to login:")
-    if st.button("Login to Dashboard", use_container_width=True):
-      if name_input.strip():
-        st.session_state.logged_in = True
-        st.session_state.username = name_input.strip()
-        st.rerun()
-      else:
-        st.warning("Please enter a valid name!")
+  st.markdown("### 🔐 Enter Your Name to Access Dashboard")
+  name_input = st.text_input("Your Name:", placeholder="e.g., Ayan")
+
+  if st.button("🚀 Login to Dashboard", use_container_width=True):
+    if name_input.strip():
+      st.session_state.logged_in = True
+      st.session_state.username = name_input.strip()
+      st.rerun()
+    else:
+      st.error("⚠️ Please enter a valid name before logging in!")
+
 else:
   # --- SIDEBAR NAVIGATION ---
   st.sidebar.markdown(f"### 👋 Hello, {st.session_state.username}! 🌟")
@@ -55,16 +60,9 @@ else:
   )
 
   st.sidebar.markdown("---")
-  if st.sidebar.button("🚪 Logout"):
+  if st.sidebar.button("🚪 Logout", use_container_width=True):
     st.session_state.logged_in = False
-    st.session_state.expenses = []
     st.rerun()
-
-  # Initialize session expenses if not exists
-  if "expenses" not in st.session_state:
-    st.session_state.expenses = []
-  if "friends" not in st.session_state:
-    st.session_state.friends = ["Rahul", "Priya", "Amit", "Neha"]
 
   # --- PAGE 1: HOME & TRIP SETUP ---
   if page == "🏠 Home & Trip Setup":
@@ -145,10 +143,8 @@ else:
     st.markdown("---")
 
     friends = st.session_state.friends
-
     tab1, tab2 = st.tabs(["✨ Natural Language Entry", "📝 Manual Form Entry"])
 
-    # TAB 1: Natural Language Parsing
     with tab1:
       st.info(
           "💡 **Tip:** Type something like: *'Rahul paid 1200 for dinner with"
@@ -162,19 +158,15 @@ else:
       if st.button("✨ Parse & Add Expense"):
         if nlp_input.strip():
           text = nlp_input.strip()
-
-          # Extract amount
           numbers = re.findall(r"\d+", text)
           amount = float(numbers[0]) if numbers else 0.0
 
-          # Find who paid
           found_payer = friends[0]
           for f in friends:
             if f.lower() in text.lower():
               found_payer = f
               break
 
-          # Find title
           title = "General Expense"
           for keyword in [
               "dinner",
@@ -190,7 +182,6 @@ else:
               title = keyword.capitalize()
               break
 
-          # Add to session state
           st.session_state.expenses.append({
               "Title": title,
               "Amount": amount,
@@ -209,7 +200,6 @@ else:
         else:
           st.error("Please type an expense sentence first!")
 
-    # TAB 2: Standard Manual Form
     with tab2:
       with st.form("manual_expense_form"):
         col1, col2, col3 = st.columns(3)
@@ -234,7 +224,6 @@ else:
           })
           st.success(f"Added '{expense_title}' of ₹{amount} successfully!")
 
-    # Display History
     if st.session_state.expenses:
       st.markdown("---")
       st.subheader("📋 Recorded Expenses History")
