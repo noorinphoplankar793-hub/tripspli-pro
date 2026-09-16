@@ -1,3 +1,4 @@
+import re
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -22,8 +23,8 @@ if not st.session_state.logged_in:
       unsafe_allow_html=True,
   )
   st.markdown(
-      "<h4 style='text-align: center; color: gray;'>Your Smart Travel Expense"
-      " & AI Planner Partner</h4>",
+      "<h4 style='text-align: center; color: gray;'>Smart Travel Expense & AI"
+      " Itinerary Partner</h4>",
       unsafe_allow_html=True,
   )
 
@@ -48,7 +49,7 @@ else:
       [
           "🏠 Home & Trip Setup",
           "🤖 AI Trip Planner",
-          "💸 Manage Expenses",
+          "💸 Manage Expenses (Smart Entry)",
           "⚖️ Settlement & Analytics",
       ],
   )
@@ -62,13 +63,14 @@ else:
   # Initialize session expenses if not exists
   if "expenses" not in st.session_state:
     st.session_state.expenses = []
+  if "friends" not in st.session_state:
+    st.session_state.friends = ["Rahul", "Priya", "Amit", "Neha"]
 
   # --- PAGE 1: HOME & TRIP SETUP ---
   if page == "🏠 Home & Trip Setup":
     st.title("🌍 Trip Setup & Overview")
     st.markdown(
-        "Welcome to your personal expense splitter hub. Set up your trip"
-        " details below to get started!"
+        "Set up your trip details and add members to begin smart splitting."
     )
     st.markdown("---")
 
@@ -80,39 +82,26 @@ else:
     with col2:
       friends_input = st.text_area(
           "Enter Friends' Names (comma separated)",
-          "Rahul, Priya, Amit, Neha",
-          help="Type names separated by commas",
+          ", ".join(st.session_state.friends),
       )
 
     friends = [f.strip() for f in friends_input.split(",") if f.strip()]
     st.session_state.friends = friends
 
     if friends:
-      st.success(
-          f"✨ Trip '{trip_name}' successfully configured for:"
-          f" {', '.join(friends)}"
-      )
-
-      st.markdown("### 📌 Quick Stats")
-      m1, m2, m3 = st.columns(3)
-      m1.metric("Trip Name", trip_name)
-      m2.metric("Total Members", len(friends))
-      m3.metric("Total Expenses Logged", len(st.session_state.expenses))
+      st.success(f"✨ Trip '{trip_name}' configured for: {', '.join(friends)}")
 
   # --- PAGE 2: AI TRIP PLANNER ---
   elif page == "🤖 AI Trip Planner":
     st.title("🤖 AI Itinerary & Destination Planner")
     st.markdown(
-        "Enter a destination and duration below, and let AI generate a"
-        " customized travel plan for you!"
+        "Generate custom day-by-day itineraries instantly using AI logic."
     )
     st.markdown("---")
 
     col1, col2 = st.columns(2)
     with col1:
-      ai_destination = st.text_input(
-          "🌍 Enter Destination", "Goa", placeholder="e.g., Manali, Kerala, Dubai"
-      )
+      ai_destination = st.text_input("🌍 Enter Destination", "Goa")
     with col2:
       trip_days = st.number_input(
           "📅 Number of Days", min_value=1, max_value=15, value=3
@@ -132,63 +121,98 @@ else:
       if ai_destination.strip():
         st.markdown("---")
         st.success(
-            f"✨ Here is your customized {trip_days}-Day Plan for"
-            f" **{ai_destination}** ({travel_vibe} style):"
+            f"✨ Generated {trip_days}-Day Plan for **{ai_destination}**:"
         )
-
-        # Generating dynamic sample itinerary based on user input
         for day in range(1, trip_days + 1):
-          with st.expander(f"📍 Day {day}: Exploring {ai_destination}", expanded=(day == 1)):
-            if travel_vibe == "Party & Nightlife":
-              st.markdown(f"""
-              * **Morning:** Sleep in late, heavy beachside brunch at a popular cafe in {ai_destination}.
-              * **Afternoon:** Water sports, chilling by the beach club pool, and relaxing photoshoots.
-              * **Evening:** Sunset cruise / Beach shack hopping.
-              * **Night:** Famous club / DJ night party experience!
-              """)
-            elif travel_vibe == "Adventure & Trekking":
-              st.markdown(f"""
-              * **Morning:** Early morning sunrise trek / Off-road trail biking around {ai_destination}.
-              * **Afternoon:** Local sightseeing, valley views, and adventure sports (ziplining/rafting).
-              * **Evening:** Bonfire setup, stargazing, and local street food tour.
-              """)
-            else:
-              st.markdown(f"""
-              * **Morning:** Visit top historical landmarks, scenic viewpoints, and local breakfast spots in {ai_destination}.
-              * **Afternoon:** Guided cultural tour, local shopping markets, and cafe hopping.
-              * **Evening:** Scenic sunset view point visit.
-              * **Night:** Fine dining experience exploring authentic local cuisine.
-              """)
-        st.info("💡 Tip: You can copy these spots or add expenses directly once you book them!")
+          with st.expander(
+              f"📍 Day {day}: Exploring {ai_destination}", expanded=(day == 1)
+          ):
+            st.markdown(f"""
+                        * **Morning:** Scenic viewpoints, cafe breakfast in {ai_destination}.
+                        * **Afternoon:** Sightseeing, local attractions, and group activities.
+                        * **Evening:** Sunset exploration and group dinner.
+                        """)
       else:
-        st.error("Please enter a valid destination name!")
+        st.error("Please enter a valid destination!")
 
-  # --- PAGE 3: MANAGE EXPENSES ---
-  elif page == "💸 Manage Expenses":
-    st.title("💸 Add & Track Expenses")
+  # --- PAGE 3: MANAGE EXPENSES (WITH NATURAL LANGUAGE ENTRY) ---
+  elif page == "💸 Manage Expenses (Smart Entry)":
+    st.title("💸 Smart Expense Entry")
     st.markdown(
-        "Record who paid what, and choose who will share the expense."
+        "Choose between **Natural Language AI Entry** (typing a sentence) or"
+        " standard manual entry."
     )
     st.markdown("---")
 
-    if "friends" not in st.session_state or not st.session_state.friends:
-      st.warning(
-          "⚠️ Please go to the 'Home & Trip Setup' page first and add your"
-          " friends' names!"
-      )
-    else:
-      friends = st.session_state.friends
+    friends = st.session_state.friends
 
-      with st.form("expense_form", clear_on_submit=True):
+    tab1, tab2 = st.tabs(["✨ Natural Language Entry", "📝 Manual Form Entry"])
+
+    # TAB 1: Natural Language Parsing
+    with tab1:
+      st.info(
+          "💡 **Tip:** Type something like: *'Rahul paid 1200 for dinner with"
+          f" {', '.join(friends)}'* "
+      )
+      nlp_input = st.text_input(
+          "Type your expense in plain English:",
+          placeholder=f"e.g., I paid 2000 for cab with {friends[0]}",
+      )
+
+      if st.button("✨ Parse & Add Expense"):
+        if nlp_input.strip():
+          # Simple NLP extraction logic using regex and name matching
+          text = nlp_input.strip()
+
+          # Extract amount (looking for digits)
+          numbers = re.findall(r"\d+", text)
+          amount = float(numbers[0]) if numbers else 0.0
+
+          # Find who paid (check which friend's name is in the text)
+          found_payer = friends[0]  # default
+          for f in friends:
+            if f.lower() in text.lower():
+              found_payer = f
+              break
+
+          # Find title (rough extraction)
+          title = "General Expense"
+          for keyword in [
+              "dinner",
+              "lunch",
+              "breakfast",
+              "cab",
+              "hotel",
+              "beer",
+              "ticket",
+              "coffee",
+          ]:
+            if keyword in text.lower():
+              title = keyword.capitalize()
+              break
+
+          # Add to session state
+          st.session_state.expenses.append({
+              "Title": title,
+              "Amount": amount,
+              "Paid By": found_payer,
+              "Split With": friends,
+          })
+          st.success(
+              f"✅ Successfully Parsed! Added **{title}** worth **₹{amount}**"
+              f" paid by **{found_payer**} split among all."
+          )
+        else:
+          st.error("Please type an expense sentence first!")
+
+    # TAB 2: Standard Manual Form
+    with tab2:
+      with st.form("manual_expense_form"):
         col1, col2, col3 = st.columns(3)
         with col1:
-          expense_title = st.text_input(
-              "Expense Title", placeholder="e.g., Hotel Booking"
-          )
+          expense_title = st.text_input("Expense Title", "Dinner")
         with col2:
-          amount = st.number_input(
-              "Amount (₹)", min_value=0.0, value=1000.0, step=100.0
-          )
+          amount = st.number_input("Amount (₹)", min_value=0.0, value=500.0)
         with col3:
           paid_by = st.selectbox("Paid By", friends)
 
@@ -196,43 +220,31 @@ else:
             "Split Among", friends, default=friends
         )
 
-        submitted = st.form_submit_button(
-            "➕ Add Expense", use_container_width=True
-        )
+        submitted = st.form_submit_button("➕ Add Expense Manually")
         if submitted:
-          if expense_title.strip() and amount > 0 and split_among:
-            st.session_state.expenses.append({
-                "Title": expense_title,
-                "Amount": amount,
-                "Paid By": paid_by,
-                "Split With": split_among,
-            })
-            st.success(
-                f"✅ Added '{expense_title}' worth ₹{amount} paid by {paid_by}!"
-            )
-          else:
-            st.error(
-                "Please fill in all details correctly and select at least one"
-                " person to split with."
-            )
+          st.session_state.expenses.append({
+              "Title": expense_title,
+              "Amount": amount,
+              "Paid By": paid_by,
+              "Split With": split_among,
+          })
+          st.success(f"Added '{expense_title}' of ₹{amount} successfully!")
 
-      # Show Expense History Table
-      if st.session_state.expenses:
-        st.markdown("---")
-        st.subheader("📋 Recorded Expenses History")
-        df = pd.DataFrame(st.session_state.expenses)
-        st.dataframe(df, use_container_width=True)
+    # Display History
+    if st.session_state.expenses:
+      st.markdown("---")
+      st.subheader("📋 Recorded Expenses History")
+      df = pd.DataFrame(st.session_state.expenses)
+      st.dataframe(df, use_container_width=True)
 
   # --- PAGE 4: SETTLEMENT & ANALYTICS ---
   elif page == "⚖️ Settlement & Analytics":
     st.title("⚖️ Smart Settlement & Analytics")
-    st.markdown("See who owes whom and check overall expense breakdowns.")
+    st.markdown("Optimized balances and insights for your trip.")
     st.markdown("---")
 
-    if "friends" not in st.session_state or not st.session_state.friends:
-      st.warning("⚠️ Please set up your trip and friends on the Home page first!")
-    elif not st.session_state.expenses:
-      st.info("ℹ️ No expenses added yet. Go to 'Manage Expenses' to add some!")
+    if not st.session_state.expenses:
+      st.info("ℹ️ No expenses added yet. Add some expenses first!")
     else:
       friends = st.session_state.friends
       balances = {friend: 0.0 for friend in friends}
@@ -249,9 +261,8 @@ else:
             balances[consumer] -= share
 
       col1, col2 = st.columns(2)
-
       with col1:
-        st.subheader("💰 Net Balances Breakdown")
+        st.subheader("💰 Net Balances")
         for person, bal in balances.items():
           if bal > 0:
             st.markdown(
@@ -265,10 +276,8 @@ else:
             st.markdown(f"⚪ **{person}** is fully settled up.")
 
       with col2:
-        st.subheader("📊 Trip Analytics")
+        st.subheader("📊 Analytics")
         total_spent = sum([exp["Amount"] for exp in st.session_state.expenses])
-        st.metric(label="Total Trip Expenses", value=f"₹{total_spent}")
+        st.metric(label="Total Trip Spending", value=f"₹{total_spent}")
         per_head = total_spent / len(friends) if friends else 0
-        st.metric(
-            label="Average Spending Per Person", value=f"₹{round(per_head, 2)}"
-        )
+        st.metric(label="Average Per Person", value=f"₹{round(per_head, 2)}")
