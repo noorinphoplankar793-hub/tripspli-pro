@@ -161,21 +161,20 @@ else:
 
       if st.button("✨ Parse & Add Expense"):
         if nlp_input.strip():
-          # Simple NLP extraction logic using regex and name matching
           text = nlp_input.strip()
 
-          # Extract amount (looking for digits)
+          # Extract amount
           numbers = re.findall(r"\d+", text)
           amount = float(numbers[0]) if numbers else 0.0
 
-          # Find who paid (check which friend's name is in the text)
-          found_payer = friends[0]  # default
+          # Find who paid
+          found_payer = friends[0]
           for f in friends:
             if f.lower() in text.lower():
               found_payer = f
               break
 
-          # Find title (rough extraction)
+          # Find title
           title = "General Expense"
           for keyword in [
               "dinner",
@@ -199,8 +198,13 @@ else:
               "Split With": friends,
           })
           st.success(
-              f"✅ Successfully Parsed! Added **{title}** worth **₹{amount}**"
-              f" paid by **{found_payer**} split among all."
+              "✅ Successfully Parsed! Added "
+              + title
+              + " worth ₹"
+              + str(amount)
+              + " paid by "
+              + found_payer
+              + " split among all."
           )
         else:
           st.error("Please type an expense sentence first!")
