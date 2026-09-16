@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- GLOBAL STYLING & BACKGROUND OVERRIDE ---
+# --- GLOBAL STYLING ---
 st.markdown(
     """
     <style>
@@ -20,7 +20,6 @@ st.markdown(
         font-family: 'Outfit', sans-serif;
     }
 
-    /* Global Dark Banner Styling */
     .global-banner {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         padding: 15px 25px;
@@ -52,6 +51,39 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
+# --- SMART DESTINATION BUDGET CALCULATOR FUNCTION ---
+def get_smart_budget(destination_name):
+  dest = destination_name.lower()
+  # International or expensive hubs
+  international_keywords = [
+      "paris",
+      "tokyo",
+      "london",
+      "new york",
+      "dubai",
+      "switzerland",
+      "europe",
+      "maldives",
+      "singapore",
+      "bali",
+      "usa",
+      "uk",
+      "thailand",
+  ]
+  for keyword in international_keywords:
+    if keyword in dest:
+      if keyword in ["paris", "tokyo", "london", "new york", "switzerland"]:
+        return 180000.0  # High-end international
+      elif keyword in ["dubai", "singapore", "maldives"]:
+        return 120000.0  # Mid-high international
+      else:
+        return 65000.0  # Budget international (Bali, Thailand)
+
+  # Default domestic / India destinations
+  return 20000.0
+
+
 # --- SESSION STATE INITIALIZATION ---
 if "logged_in" not in st.session_state:
   st.session_state.logged_in = False
@@ -61,10 +93,10 @@ if "expenses" not in st.session_state:
   st.session_state.expenses = []
 if "friends" not in st.session_state:
   st.session_state.friends = ["Rahul", "Priya", "Amit", "Neha"]
-if "trip_budget" not in st.session_state:
-  st.session_state.trip_budget = 15000.0
 if "search_destination" not in st.session_state:
   st.session_state.search_destination = "Goa, India"
+if "trip_budget" not in st.session_state:
+  st.session_state.trip_budget = get_smart_budget("Goa, India")
 
 # --- STABLE LOGIN SCREEN ---
 if not st.session_state.logged_in:
@@ -114,7 +146,6 @@ else:
 
   # --- PAGE 1: HOME & TRIP SETUP ---
   if page == "🏠 Home & Trip Setup":
-    # --- STUNNING HIGH-END TRAVEL HERO BANNER (With Background Image & Working Search Input) ---
     st.markdown(
         """
         <style>
@@ -148,13 +179,6 @@ else:
             margin-bottom: 20px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
-        .search-pill-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
         .search-pill {
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
@@ -174,7 +198,7 @@ else:
         unsafe_allow_html=True,
     )
 
-    # --- FULLY WORKING INTERACTIVE SEARCH BAR ---
+    # --- FULLY WORKING INTERACTIVE SEARCH BAR WITH DYNAMIC BUDGET UPDATION ---
     col_s1, col_s2, col_s3 = st.columns([1, 3, 1])
     with col_s2:
       st.markdown(
@@ -185,11 +209,15 @@ else:
       user_search = st.text_input(
           "Search destination",
           value=st.session_state.search_destination,
-          placeholder="Type any city or country (e.g., Paris, Bali)",
+          placeholder="Type any city (e.g., Paris, Goa, Tokyo, Bali)",
           label_visibility="collapsed",
       )
-      if user_search:
+
+      if user_search != st.session_state.search_destination:
         st.session_state.search_destination = user_search
+        # Automatically update budget based on destination
+        st.session_state.trip_budget = get_smart_budget(user_search)
+        st.rerun()
 
       st.markdown(
           """
@@ -207,8 +235,8 @@ else:
     st.markdown("---")
     st.title("🌍 Trip Setup & Overview")
     st.markdown(
-        "Set up your trip details, members, and total budget to begin smart"
-        " splitting."
+        "Set up your trip details, members, and AI-optimized destination budget"
+        " below."
     )
     st.markdown("---")
 
@@ -221,10 +249,12 @@ else:
       destination = st.text_input(
           "Destination", st.session_state.search_destination
       )
+
+      # Automatic budget suggestion notice
       st.session_state.trip_budget = st.number_input(
-          "💰 Total Trip Budget (₹)",
+          "💰 Total Trip Budget (₹) [Auto-optimized for destination]",
           min_value=1000.0,
-          value=st.session_state.trip_budget,
+          value=float(st.session_state.trip_budget),
           step=1000.0,
       )
 
@@ -239,8 +269,9 @@ else:
 
     if friends:
       st.success(
-          f"✨ Trip '{trip_name}' configured for **{destination}** with a budget"
-          f" of ₹{st.session_state.trip_budget} for: {', '.join(friends)}"
+          f"✨ Trip '{trip_name}' configured for **{destination}** with an"
+          f" AI-recommended budget of ₹{st.session_state.trip_budget} for:"
+          f" {', '.join(friends)}"
       )
 
   # --- PAGE 2: AI TRIP PLANNER ---
@@ -283,9 +314,9 @@ else:
               f"📍 Day {day}: Exploring {ai_destination}", expanded=(day == 1)
           ):
             st.markdown(f"""
-                        * **Morning:** Scenic viewpoints, cafe breakfast in {ai_destination}.
-                        * **Afternoon:** Sightseeing, local attractions, and group activities.
-                        * **Evening:** Sunset exploration and group dinner.
+                        * **Morning:** Scenic viewpoints, local landmark visits in {ai_destination}.
+                        * **Afternoon:** Cultural sightseeing, famous cafes, and group activities.
+                        * **Evening:** Sunset/Nightlife exploration and group dinner.
                         """)
       else:
         st.error("Please enter a valid destination!")
