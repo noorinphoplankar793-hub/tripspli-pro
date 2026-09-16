@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- GLOBAL STYLING ---
+# --- LUXURY STYLING & DESIGN UPGRADE (Without touching backend logic) ---
 st.markdown(
     """
     <style>
@@ -20,27 +20,69 @@ st.markdown(
         font-family: 'Outfit', sans-serif;
     }
 
+    /* Global Dark Banner Styling */
     .global-banner {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         padding: 15px 25px;
-        border-radius: 12px;
+        border-radius: 14px;
         color: white;
         text-align: center;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .global-banner h2 {
         color: #38bdf8;
         margin-bottom: 2px;
         font-weight: 700;
-        font-size: 1.3rem;
-        letter-spacing: 1px;
+        font-size: 1.4rem;
+        letter-spacing: 0.5px;
     }
     .global-banner p {
         color: #94a3b8;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         margin: 0;
+    }
+
+    /* Stunning Hero Section */
+    .hero-container {
+        background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+                    url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80');
+        background-size: cover;
+        background-position: center;
+        padding: 50px 30px;
+        border-radius: 20px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        margin-bottom: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .hero-title {
+        font-size: 3.2rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+    }
+    .hero-tagline {
+        font-size: 1.25rem;
+        color: #e2e8f0;
+        font-weight: 400;
+        margin-bottom: 25px;
+    }
+
+    /* Sleek Search Pill */
+    .search-container {
+        background: rgba(255, 255, 255, 0.95);
+        max-width: 600px;
+        margin: 0 auto 15px auto;
+        padding: 8px 20px;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
     }
     </style>
     <div class="global-banner">
@@ -52,10 +94,9 @@ st.markdown(
 )
 
 
-# --- SMART DESTINATION BUDGET CALCULATOR FUNCTION ---
+# --- SMART DESTINATION BUDGET CALCULATOR FUNCTION (Preserved) ---
 def get_smart_budget(destination_name):
   dest = destination_name.lower()
-  # International or expensive hubs
   international_keywords = [
       "paris",
       "tokyo",
@@ -74,13 +115,11 @@ def get_smart_budget(destination_name):
   for keyword in international_keywords:
     if keyword in dest:
       if keyword in ["paris", "tokyo", "london", "new york", "switzerland"]:
-        return 180000.0  # High-end international
+        return 180000.0
       elif keyword in ["dubai", "singapore", "maldives"]:
-        return 120000.0  # Mid-high international
+        return 120000.0
       else:
-        return 65000.0  # Budget international (Bali, Thailand)
-
-  # Default domestic / India destinations
+        return 65000.0
   return 20000.0
 
 
@@ -148,57 +187,15 @@ else:
   if page == "🏠 Home & Trip Setup":
     st.markdown(
         """
-        <style>
-        .tripypedia-hero-bg {
-            background: linear-gradient(rgba(15, 23, 42, 0.78), rgba(15, 23, 42, 0.88)), 
-                        url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80');
-            background-size: cover;
-            background-position: center;
-            padding: 40px 20px 30px 20px;
-            border-radius: 24px;
-            color: white;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        .tripypedia-logo {
-            font-size: 2.8rem;
-            font-weight: 800;
-            background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1.5px;
-            margin-bottom: 2px;
-        }
-        .tripypedia-tagline {
-            font-size: 1.1rem;
-            color: #e2e8f0;
-            font-weight: 400;
-            font-style: italic;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        .search-pill {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            color: #ffffff;
-            font-weight: 500;
-        }
-        </style>
-        <div class="tripypedia-hero-bg">
-            <div class="tripypedia-logo">TripSplit AI</div>
-            <div class="tripypedia-tagline">Explore Dreams. Discover the World.</div>
+        <div class="hero-container">
+            <div class="hero-title">TripSplit AI</div>
+            <div class="hero-tagline">Plan Trips. Split Bills. Make Memories.</div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    # --- FULLY WORKING INTERACTIVE SEARCH BAR WITH DYNAMIC BUDGET UPDATION ---
+    # Working interactive destination search bar (updates budget automatically)
     col_s1, col_s2, col_s3 = st.columns([1, 3, 1])
     with col_s2:
       st.markdown(
@@ -215,18 +212,16 @@ else:
 
       if user_search != st.session_state.search_destination:
         st.session_state.search_destination = user_search
-        # Automatically update budget based on destination
         st.session_state.trip_budget = get_smart_budget(user_search)
         st.rerun()
 
       st.markdown(
           """
-            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; margin-bottom: 20px;">
-                <span class="search-pill">🌴 Tropical Paradises</span>
-                <span class="search-pill">🏔️ Adventure & Nature</span>
-                <span class="search-pill">❄️ Winter & Snow</span>
-                <span class="search-pill">🏛️ Cultural Escapes</span>
-                <span class="search-pill">🦁 Safari & Wildlife</span>
+            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; margin-bottom: 25px;">
+                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🌴 Tropical Paradises</span>
+                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🏔️ Adventure & Nature</span>
+                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">❄️ Winter & Snow</span>
+                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🏛️ Cultural Escapes</span>
             </div>
             """,
           unsafe_allow_html=True,
@@ -249,8 +244,6 @@ else:
       destination = st.text_input(
           "Destination", st.session_state.search_destination
       )
-
-      # Automatic budget suggestion notice
       st.session_state.trip_budget = st.number_input(
           "💰 Total Trip Budget (₹) [Auto-optimized for destination]",
           min_value=1000.0,
