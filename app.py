@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide",
 )
 
-# --- LUXURY STYLING & DESIGN UPGRADE (Without touching backend logic) ---
+# --- CLEAN LUXURY STYLING ---
 st.markdown(
     """
     <style>
@@ -20,81 +20,46 @@ st.markdown(
         font-family: 'Outfit', sans-serif;
     }
 
-    /* Global Dark Banner Styling */
-    .global-banner {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 15px 25px;
-        border-radius: 14px;
-        color: white;
-        text-align: center;
-        margin-bottom: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .global-banner h2 {
-        color: #38bdf8;
-        margin-bottom: 2px;
-        font-weight: 700;
-        font-size: 1.4rem;
-        letter-spacing: 0.5px;
-    }
-    .global-banner p {
-        color: #94a3b8;
-        font-size: 0.9rem;
-        margin: 0;
-    }
+    /* Hide default streamlit header elements to give a clean SaaS look */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
 
     /* Stunning Hero Section */
     .hero-container {
-        background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), 
+        background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.88)), 
                     url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80');
         background-size: cover;
         background-position: center;
-        padding: 50px 30px;
+        padding: 55px 30px;
         border-radius: 20px;
         color: white;
         text-align: center;
         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        margin-bottom: 30px;
+        margin-bottom: 25px;
         border: 1px solid rgba(255, 255, 255, 0.15);
     }
     .hero-title {
-        font-size: 3.2rem;
+        font-size: 3.5rem;
         font-weight: 800;
         background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         margin-bottom: 5px;
+        letter-spacing: 1px;
     }
     .hero-tagline {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
         color: #e2e8f0;
         font-weight: 400;
-        margin-bottom: 25px;
-    }
-
-    /* Sleek Search Pill */
-    .search-container {
-        background: rgba(255, 255, 255, 0.95);
-        max-width: 600px;
-        margin: 0 auto 15px auto;
-        padding: 8px 20px;
-        border-radius: 50px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        display: flex;
-        align-items: center;
+        margin-bottom: 0;
     }
     </style>
-    <div class="global-banner">
-        <h2>✈️ TRIPSPLIT AI — PRO TRAVEL SUITE</h2>
-        <p>Smart Travel Planner, Receipt OCR & Expense Splitting Suite</p>
-    </div>
 """,
     unsafe_allow_html=True,
 )
 
 
-# --- SMART DESTINATION BUDGET CALCULATOR FUNCTION (Preserved) ---
+# --- SMART DESTINATION BUDGET CALCULATOR FUNCTION ---
 def get_smart_budget(destination_name):
   dest = destination_name.lower()
   international_keywords = [
@@ -195,11 +160,11 @@ else:
         unsafe_allow_html=True,
     )
 
-    # Working interactive destination search bar (updates budget automatically)
+    # Search bar & category tags layout
     col_s1, col_s2, col_s3 = st.columns([1, 3, 1])
     with col_s2:
       st.markdown(
-          "<h4 style='text-align: center; margin-bottom: 5px;'>🔍 Where to"
+          "<h4 style='text-align: center; margin-bottom: 2px;'>🔍 Where to"
           " next?</h4>",
           unsafe_allow_html=True,
       )
@@ -217,11 +182,11 @@ else:
 
       st.markdown(
           """
-            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; margin-bottom: 25px;">
-                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🌴 Tropical Paradises</span>
-                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🏔️ Adventure & Nature</span>
-                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">❄️ Winter & Snow</span>
-                <span style="background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🏛️ Cultural Escapes</span>
+            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; margin-bottom: 20px;">
+                <span style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🌴 Tropical Paradises</span>
+                <span style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🏔️ Adventure & Nature</span>
+                <span style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">❄️ Winter & Snow</span>
+                <span style="background: rgba(14, 165, 233, 0.15); border: 1px solid rgba(14, 165, 233, 0.3); padding: 5px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 500;">🏛️ Cultural Escapes</span>
             </div>
             """,
           unsafe_allow_html=True,
