@@ -19,8 +19,10 @@ if "expenses" not in st.session_state:
   st.session_state.expenses = []
 if "friends" not in st.session_state:
   st.session_state.friends = ["Rahul", "Priya", "Amit", "Neha"]
+if "trip_budget" not in st.session_state:
+  st.session_state.trip_budget = 15000.0
 
-# --- STABLE LOGIN SCREEN (No complex columns blocking clicks) ---
+# --- STABLE LOGIN SCREEN ---
 if not st.session_state.logged_in:
   st.markdown(
       "<h1 style='text-align: center;'>✈️ TripSplit AI</h1>",
@@ -68,7 +70,8 @@ else:
   if page == "🏠 Home & Trip Setup":
     st.title("🌍 Trip Setup & Overview")
     st.markdown(
-        "Set up your trip details and add members to begin smart splitting."
+        "Set up your trip details, members, and total budget to begin smart"
+        " splitting."
     )
     st.markdown("---")
 
@@ -76,6 +79,12 @@ else:
     with col1:
       trip_name = st.text_input("Trip Name", "Goa Adventure 2026")
       destination = st.text_input("Destination", "Goa, India")
+      st.session_state.trip_budget = st.number_input(
+          "💰 Total Trip Budget (₹)",
+          min_value=1000.0,
+          value=st.session_state.trip_budget,
+          step=1000.0,
+      )
 
     with col2:
       friends_input = st.text_area(
@@ -87,7 +96,10 @@ else:
     st.session_state.friends = friends
 
     if friends:
-      st.success(f"✨ Trip '{trip_name}' configured for: {', '.join(friends)}")
+      st.success(
+          f"✨ Trip '{trip_name}' configured with a budget of"
+          f" ₹{st.session_state.trip_budget} for: {', '.join(friends)}"
+      )
 
   # --- PAGE 2: AI TRIP PLANNER ---
   elif page == "🤖 AI Trip Planner":
@@ -232,12 +244,40 @@ else:
 
   # --- PAGE 4: SETTLEMENT & ANALYTICS ---
   elif page == "⚖️ Settlement & Analytics":
-    st.title("⚖️ Smart Settlement & Analytics")
-    st.markdown("Optimized balances and insights for your trip.")
+    st.title("⚖️ Smart Settlement & Budget Analytics")
+    st.markdown("Optimized balances, spending insights, and budget forecasts.")
+    st.markdown("---")
+
+    # Budget Tracking logic
+    total_spent = sum([exp["Amount"] for exp in st.session_state.expenses])
+    budget = st.session_state.trip_budget
+
+    # Budget Warning Metric Card
+    col_b1, col_b2, col_b3 = st.columns(3)
+    col_b1.metric("🎯 Total Budget", f"₹{budget}")
+    col_b2.metric("💸 Total Spent", f"₹{total_spent}")
+    remaining = budget - total_spent
+    col_b3.metric(
+        "📌 Remaining Balance",
+        f"₹{remaining}",
+        delta=f"-₹{abs(remaining)}" if remaining < 0 else f"+₹{remaining}",
+        delta_color="inverse" if remaining < 0 else "normal",
+    )
+
+    if total_spent > budget:
+      st.error(
+          "🚨 **Budget Alert!** Your group has exceeded the total trip budget"
+          f" of ₹{budget} by ₹{abs(remaining)}!"
+      )
+    else:
+      st.success(
+          f"✅ You are within budget! ₹{remaining} remaining for the trip."
+      )
+
     st.markdown("---")
 
     if not st.session_state.expenses:
-      st.info("ℹ️ No expenses added yet. Add some expenses first!")
+      st.info("ℹ️ No expenses added yet. Add some expenses to see balances!")
     else:
       friends = st.session_state.friends
       balances = {friend: 0.0 for friend in friends}
@@ -255,7 +295,7 @@ else:
 
       col1, col2 = st.columns(2)
       with col1:
-        st.subheader("💰 Net Balances")
+        st.subheader("💰 Net Balances Breakdown")
         for person, bal in balances.items():
           if bal > 0:
             st.markdown(
@@ -269,8 +309,6 @@ else:
             st.markdown(f"⚪ **{person}** is fully settled up.")
 
       with col2:
-        st.subheader("📊 Analytics")
-        total_spent = sum([exp["Amount"] for exp in st.session_state.expenses])
-        st.metric(label="Total Trip Spending", value=f"₹{total_spent}")
+        st.subheader("📊 Spending Analytics")
         per_head = total_spent / len(friends) if friends else 0
-        st.metric(label="Average Per Person", value=f"₹{round(per_head, 2)}")
+        st.metric(label="Average Spending Per Person", value=f"₹{round(per_head, 2)}")
