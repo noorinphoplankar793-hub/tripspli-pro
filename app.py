@@ -245,14 +245,15 @@ else:
   # --- PAGE 4: SETTLEMENT & ANALYTICS ---
   elif page == "⚖️ Settlement & Analytics":
     st.title("⚖️ Smart Settlement & Budget Analytics")
-    st.markdown("Optimized balances, spending insights, and budget forecasts.")
+    st.markdown(
+        "Optimized balances, spending insights, and CSV report export."
+    )
     st.markdown("---")
 
     # Budget Tracking logic
     total_spent = sum([exp["Amount"] for exp in st.session_state.expenses])
     budget = st.session_state.trip_budget
 
-    # Budget Warning Metric Card
     col_b1, col_b2, col_b3 = st.columns(3)
     col_b1.metric("🎯 Total Budget", f"₹{budget}")
     col_b2.metric("💸 Total Spent", f"₹{total_spent}")
@@ -312,3 +313,17 @@ else:
         st.subheader("📊 Spending Analytics")
         per_head = total_spent / len(friends) if friends else 0
         st.metric(label="Average Spending Per Person", value=f"₹{round(per_head, 2)}")
+
+      # --- CSV EXPORT BUTTON ---
+      st.markdown("---")
+      st.subheader("📥 Export Trip Summary")
+      df_export = pd.DataFrame(st.session_state.expenses)
+      csv_data = df_export.to_csv(index=False).encode("utf-8")
+
+      st.download_button(
+          label="📥 Download Expense Report as CSV",
+          data=csv_data,
+          file_name="tripsplit_report.csv",
+          mime="text/csv",
+          use_container_width=True,
+      )
